@@ -11,8 +11,6 @@ import sys;
 from scipy import ndimage;
 from scipy import misc;
 indir = sys.argv[1];
-model = Sequential()
-
 
 input_img = Input(shape=(16, 16, 1))
 
@@ -55,7 +53,7 @@ for i in range(0,5):
 #             )(towerIn)
 o2 = Conv2D(1, (1, 1),
             data_format='channels_last',
-            padding='same'               
+            padding='valid'               
             )(towerIn)            
 output = Activation(activation='tanh')(o2);
 #
@@ -67,7 +65,7 @@ model.compile(loss='mean_squared_error', optimizer='adam')
 
 
 for epoch in range(0,10):
-    for i in range(0,10):
+    for i in range(0,50):
         x = np.load( indir+'/x.' + str(i)+'.npy');
         y = np.load( indir+'/y.' + str(i)+'.npy');
     
