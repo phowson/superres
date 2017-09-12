@@ -20,10 +20,16 @@ input_img = Input(shape=(16, 16, 1))
 upScaled = UpSampling2D(size=(2, 2), data_format='channels_last', input_shape=(16, 16, 1))(input_img)
 
 
-towerIn = upScaled
+towerIn  = Conv2D(32, (2, 2),
+                  
+                data_format='channels_last',
+                padding='same'                
+                )(upScaled)
+
+#towerIn = upScaled
 
 for i in range(0,5):
-    tower1 = Conv2D(32, (4, 4),
+    tower1 = Conv2D(32, (3, 3),
                 data_format='channels_last',
                 padding='same'                
                 )(towerIn)
@@ -31,7 +37,7 @@ for i in range(0,5):
     tower2 = BatchNormalization()(tower1)
     tower3 = Activation(activation='relu')(tower2);
                 
-    tower4 = Conv2D(32, (4, 4),
+    tower4 = Conv2D(32, (3, 3),
             data_format='channels_last',
             padding='same',
             )(tower3)
@@ -41,25 +47,23 @@ for i in range(0,5):
     
     towerIn = Activation(activation='relu')(towerOut);
 
-#flat=Flatten()(towerOut)
-#dense=Dense(32*32,  activation='tanh')(flat);
-#output = Reshape((32,32,1))(dense);
-o1 = Conv2D(32, (1, 1),
-            data_format='channels_last',
-            padding='same',          
-            activation = 'relu'
-            )(towerIn)
+
+# o1 = Conv2D(32, (3, 3),
+#             data_format='channels_last',
+#             padding='same',          
+#             activation = 'relu'
+#             )(towerIn)
 o2 = Conv2D(1, (1, 1),
             data_format='channels_last',
             padding='same'               
-            )(o1)            
+            )(towerIn)            
 output = Activation(activation='tanh')(o2);
 #
 model=Model(input_img, output)
 
 plot_model(model, to_file='model.png')
 
-model.compile(loss='mean_squared_error', optimizer='sgd')
+model.compile(loss='mean_squared_error', optimizer='adam')
 
 
 for epoch in range(0,10):
@@ -71,8 +75,8 @@ for epoch in range(0,10):
         x= x/255.;
         y= y/255.;
             
-        hist = model.fit(x, y, 
-              batch_size=64, nb_epoch=1, verbose=1)
+        hist = model.fit(x, y,  
+              batch_size=200, epochs=2, verbose=1)
         
         
         model.save("model.keras")
