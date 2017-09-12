@@ -44,12 +44,12 @@ for i in range(0,5):
 #flat=Flatten()(towerOut)
 #dense=Dense(32*32,  activation='tanh')(flat);
 #output = Reshape((32,32,1))(dense);
-o1 = Conv2D(32, (2, 2),
+o1 = Conv2D(32, (1, 1),
             data_format='channels_last',
             padding='same',          
             activation = 'relu'
             )(towerIn)
-o2 = Conv2D(1, (2, 2),
+o2 = Conv2D(1, (1, 1),
             data_format='channels_last',
             padding='same'               
             )(o1)            
@@ -62,17 +62,18 @@ plot_model(model, to_file='model.png')
 model.compile(loss='mean_squared_error', optimizer='sgd')
 
 
-for i in range(0,10):
-    x = np.load( indir+'/x.' + str(i)+'.npy');
-    y = np.load( indir+'/y.' + str(i)+'.npy');
-
-    # normalise
-    x= x/255.;
-    y= y/255.;
+for epoch in range(0,10):
+    for i in range(0,10):
+        x = np.load( indir+'/x.' + str(i)+'.npy');
+        y = np.load( indir+'/y.' + str(i)+'.npy');
+    
+        # normalise
+        x= x/255.;
+        y= y/255.;
+            
+        hist = model.fit(x, y, 
+              batch_size=64, nb_epoch=1, verbose=1)
         
-    hist = model.fit(x, y, 
-          batch_size=32, nb_epoch=10, verbose=1)
+        
+        model.save("model.keras")
     
-    
-    model.save("model.keras")
-
