@@ -15,10 +15,10 @@ def rolling_window(arr, window):
 
 
 
-def imageDistanceRMS(arr, arr2):
+def imageDistanceMS(arr, arr2):
     d = arr - arr2;
     pixelSize = float(arr.shape[0]*arr.shape[1]);
-    rmsError = math.sqrt(np.sum(np.square(d))/ pixelSize);
+    rmsError = np.sum(np.square(d))/ pixelSize;
     return rmsError;
 
 
